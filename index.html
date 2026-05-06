@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Workforce Management Project Tracker</title>
+  <title>WFM Project Tracker</title>
   <style>
     :root {
       --bg: #160914;
@@ -353,8 +353,8 @@
 </head>
 <body>
   <header>
-<h1>Workforce Management Project Tracker</h1>
-<p>Track forecasting, staffing, scheduling, reports, sanity checks, queue health, audits, and every other tiny work goblin trying to eat your calendar.</p>
+    <h1>🦇 WFM Project Tracker 🩷</h1>
+    <p>Track forecasting, staffing, scheduling, reports, sanity checks, queue health, audits, and every other tiny work goblin trying to eat your calendar.</p>
   </header>
 
   <main class="wrap">
@@ -548,7 +548,7 @@
   </main>
 
   <script>
-    let tasks = JSON.parse(localStorage.getItem("cutesyHorrorWfmTasks")) || [];
+    let tasks = JSON.parse(localStorage.getItem("wfmProjectTracker")) || [];
 
     function todayISO() {
       const today = new Date();
@@ -586,7 +586,7 @@
     }
 
     function saveTasks() {
-      localStorage.setItem("cutesyHorrorWfmTasks", JSON.stringify(tasks));
+      localStorage.setItem("wfmProjectTracker", JSON.stringify(tasks));
     }
 
     function toggleCustomProjectType() {
@@ -854,7 +854,7 @@
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
-      link.download = "cutesy_horror_wfm_tracker.csv";
+      link.download = "wfm_project_tracker.csv";
       link.click();
       URL.revokeObjectURL(url);
     }

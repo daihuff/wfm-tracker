@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cutesy Horror WFM Tracker</title>
+  <style>
+    :root {
+      --bg: #160914;
+      --card: #241020;
+      --card-soft: #32142d;
+      --pink: #ff8bc8;
+      --pink-hot: #ff4fa3;
+      --lavender: #d9b6ff;
+      --mint: #b8ffd9;
+      --cream: #fff0f7;
+      --blood: #dc2626;
+      --blood-dark: #7f1d1d;
+      --orange: #ffb86b;
+      --blue: #93c5fd;
+      --green: #86efac;
+      --gray: #d1d5db;
+      --text: #fff7fb;
+      --muted: #d8bfd2;
+      --line: rgba(255, 139, 200, 0.22);
+      --shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 79, 163, 0.22), transparent 35%),
+        radial-gradient(circle at bottom right, rgba(217, 182, 255, 0.2), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 28px 20px 16px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 38px;
+      letter-spacing: 0.5px;
+      color: var(--cream);
+      text-shadow: 0 0 16px rgba(255, 139, 200, 0.65);
+    }
+
+    header p {
+      margin: 10px auto 0;
+      max-width: 850px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .wrap {
+      width: min(1500px, 96vw);
+      margin: 0 auto 40px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(145px, 1fr));
+      gap: 14px;
+      margin: 20px 0;
+    }
+
+    .summary-card {
+      background: linear-gradient(160deg, var(--card), var(--card-soft));
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .summary-card::after {
+      content: "✦";
+      position: absolute;
+      top: 8px;
+      right: 14px;
+      color: rgba(255, 139, 200, 0.55);
+      font-size: 18px;
+    }
+
+    .summary-card h3 {
+      margin: 0 0 10px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+    }
+
+    .summary-card p {
+      margin: 0;
+      font-size: 30px;
+      font-weight: 800;
+      color: var(--cream);
+    }
+
+    .panel {
+      background: rgba(36, 16, 32, 0.94);
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+    }
+
+    .panel-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .panel-title h2 {
+      margin: 0;
+      color: var(--cream);
+      font-size: 24px;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .field.half {
+      grid-column: span 2;
+    }
+
+    label {
+      color: var(--cream);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 139, 200, 0.35);
+      background: #12070f;
+      color: var(--text);
+      outline: none;
+      font-size: 14px;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--pink);
+      box-shadow: 0 0 0 4px rgba(255, 139, 200, 0.15);
+    }
+
+    textarea {
+      min-height: 88px;
+      resize: vertical;
+    }
+
+    button {
+      border: 0;
+      border-radius: 16px;
+      padding: 12px 16px;
+      cursor: pointer;
+      font-weight: 800;
+      color: #190a15;
+      background: linear-gradient(135deg, var(--pink), var(--lavender));
+      box-shadow: 0 10px 24px rgba(255, 79, 163, 0.22);
+      transition: transform 0.12s ease, opacity 0.12s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.92;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+
+    .secondary-btn {
+      background: #3b1834;
+      color: var(--cream);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+
+    .danger-btn {
+      background: linear-gradient(135deg, #ef4444, #991b1b);
+      color: white;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+    }
+
+    table {
+      width: 100%;
+      min-width: 1500px;
+      border-collapse: collapse;
+      background: #130810;
+    }
+
+    th,
+    td {
+      padding: 11px 10px;
+      border-bottom: 1px solid rgba(255, 139, 200, 0.14);
+      text-align: left;
+      vertical-align: top;
+      font-size: 13px;
+    }
+
+    th {
+      position: sticky;
+      top: 0;
+      background: #2c1027;
+      color: var(--cream);
+      z-index: 1;
+      white-space: nowrap;
+    }
+
+    tr:hover {
+      background: rgba(255, 139, 200, 0.06);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .priority-low { background: rgba(134, 239, 172, 0.18); color: var(--green); }
+    .priority-medium { background: rgba(147, 197, 253, 0.18); color: var(--blue); }
+    .priority-high { background: rgba(255, 184, 107, 0.18); color: var(--orange); }
+    .priority-urgent { background: rgba(220, 38, 38, 0.25); color: #fecaca; }
+
+    .status-not-started { background: rgba(209, 213, 219, 0.16); color: var(--gray); }
+    .status-in-progress { background: rgba(147, 197, 253, 0.18); color: var(--blue); }
+    .status-on-hold { background: rgba(217, 182, 255, 0.18); color: var(--lavender); }
+    .status-awaiting-sanity-check { background: rgba(255, 184, 107, 0.18); color: var(--orange); }
+    .status-attention-needed { background: rgba(255, 79, 163, 0.22); color: var(--pink); }
+    .status-completed { background: rgba(134, 239, 172, 0.18); color: var(--green); }
+    .status-overdue { background: rgba(220, 38, 38, 0.35); color: #fecaca; }
+
+    .overdue-row {
+      background: rgba(220, 38, 38, 0.22) !important;
+      font-weight: 800;
+      color: #fff1f2;
+    }
+
+    .small-btn {
+      padding: 8px 10px;
+      font-size: 12px;
+      border-radius: 12px;
+      margin: 2px;
+    }
+
+    .inline-edit {
+      min-width: 150px;
+      padding: 8px;
+      border-radius: 10px;
+      font-size: 12px;
+    }
+
+    .attachment-list {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+
+    .alert-box {
+      display: none;
+      background: rgba(220, 38, 38, 0.18);
+      border: 1px solid rgba(248, 113, 113, 0.5);
+      color: #fecaca;
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 16px;
+      line-height: 1.45;
+    }
+
+    .alert-box strong {
+      color: white;
+    }
+
+    .ghost-divider {
+      color: var(--pink);
+      text-align: center;
+      margin: 20px 0;
+      letter-spacing: 8px;
+    }
+
+    @media (max-width: 1100px) {
+      .summary-grid { grid-template-columns: repeat(3, 1fr); }
+      .form-grid { grid-template-columns: repeat(2, 1fr); }
+      .filters { grid-template-columns: 1fr 1fr; }
+    }
+
+    @media (max-width: 650px) {
+      header h1 { font-size: 28px; }
+      .summary-grid { grid-template-columns: 1fr; }
+      .form-grid { grid-template-columns: 1fr; }
+      .field.half { grid-column: 1 / -1; }
+      .filters { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🦇 Cutesy Horror WFM Tracker 🩷</h1>
+    <p>Track forecasting, staffing, scheduling, reports, sanity checks, queue health, audits, and every other tiny work goblin trying to eat your calendar.</p>
+  </header>
+
+  <main class="wrap">
+    <section class="summary-grid">
+      <div class="summary-card"><h3>Total Projects</h3><p id="sumTotal">0</p></div>
+      <div class="summary-card"><h3>In Progress</h3><p id="sumProgress">0</p></div>
+      <div class="summary-card"><h3>Attention Needed</h3><p id="sumAttention">0</p></div>
+      <div class="summary-card"><h3>Overdue</h3><p id="sumOverdue">0</p></div>
+      <div class="summary-card"><h3>Completed</h3><p id="sumCompleted">0</p></div>
+      <div class="summary-card"><h3>On Hold</h3><p id="sumHold">0</p></div>
+    </section>
+
+    <section id="alertBox" class="alert-box"></section>
+
+    <section class="panel">
+      <div class="panel-title">
+        <h2>Add New WFM Project</h2>
+        <div class="hint">Start Date auto-fills when status moves out of Not Started. Completion Date auto-fills when marked Completed.</div>
+      </div>
+
+      <div class="form-grid">
+        <div class="field half">
+          <label for="taskName">Task Name</label>
+          <input id="taskName" placeholder="Example: Build IL April Erlang Pressure Test" />
+        </div>
+
+        <div class="field">
+          <label for="projectType">Project Type</label>
+          <select id="projectType" onchange="toggleCustomProjectType()">
+            <option value="">Select Type</option>
+            <option>Forecasting</option>
+            <option>Staffing</option>
+            <option>Power BI</option>
+            <option>Adherence (RTA)</option>
+            <option>Scheduling</option>
+            <option>Reports / Report Building</option>
+            <option>Queue Monitoring and Health</option>
+            <option>Auditing</option>
+            <option>Sanity Checks</option>
+            <option value="Custom">Custom</option>
+          </select>
+        </div>
+
+        <div class="field" id="customProjectTypeWrap" style="display:none;">
+          <label for="customProjectType">Custom Project Type</label>
+          <input id="customProjectType" placeholder="Enter custom type" />
+        </div>
+
+        <div class="field">
+          <label for="state">State</label>
+          <select id="state">
+            <option value="">Select State</option>
+            <option>GA</option><option>IL</option><option>NM</option><option>NV</option>
+            <option>PA</option><option>VA</option><option>OR</option><option>Multistate</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="assignedBy">Assigned By</label>
+          <select id="assignedBy" onchange="suggestPriorityFromAssignedBy()">
+            <option value="">Select Assigned By</option>
+            <option>Daisa</option>
+            <option>Manager</option>
+            <option>VP</option>
+            <option>Director</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="owner">Owner</label>
+          <input id="owner" placeholder="Example: Ana / Daisa / WFM Team" />
+        </div>
+
+        <div class="field">
+          <label for="ownerEmail">Owner Email</label>
+          <input id="ownerEmail" placeholder="Email added later, ex: person@email.com" />
+        </div>
+
+        <div class="field">
+          <label for="priority">Priority</label>
+          <select id="priority">
+            <option>Low</option>
+            <option>Medium</option>
+            <option>High</option>
+            <option>Urgent</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="status">Status</label>
+          <select id="status">
+            <option>Not Started</option>
+            <option>In Progress</option>
+            <option>On Hold</option>
+            <option>Awaiting Sanity Check</option>
+            <option>Attention Needed</option>
+            <option>Completed</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="dueDate">Due Date</label>
+          <input id="dueDate" type="date" />
+        </div>
+
+        <div class="field half">
+          <label for="attachmentInput">Attachments</label>
+          <input id="attachmentInput" type="file" multiple />
+        </div>
+
+        <div class="field half">
+          <label for="notes">Notes</label>
+          <textarea id="notes" placeholder="Blockers, leadership asks, data needed..."></textarea>
+        </div>
+
+        <div class="field half">
+          <label for="updateNotes">New Update Notes</label>
+          <textarea id="updateNotes" placeholder="New feedback, requested changes, corrections needed..."></textarea>
+        </div>
+      </div>
+
+      <div class="button-row">
+        <button onclick="addTask()">Add Project</button>
+        <button class="secondary-btn" onclick="clearForm()">Clear Form</button>
+      </div>
+    </section>
+
+    <div class="ghost-divider">♡ ✦ 🦇 ✦ ♡</div>
+
+    <section class="panel">
+      <div class="panel-title">
+        <h2>Project Graveyard, But Productive</h2>
+        <div class="hint">Rows turn red when overdue. Email alerts are staged as browser alerts until a real backend exists, because local files cannot magically send email. Tragic.</div>
+      </div>
+
+      <div class="filters">
+        <input id="searchBox" placeholder="Search by task, owner, state, notes..." onkeyup="renderTasks()" />
+        <select id="statusFilter" onchange="renderTasks()">
+          <option value="">All Statuses</option>
+          <option>Not Started</option>
+          <option>In Progress</option>
+          <option>On Hold</option>
+          <option>Awaiting Sanity Check</option>
+          <option>Attention Needed</option>
+          <option>Completed</option>
+          <option>Overdue</option>
+        </select>
+        <select id="priorityFilter" onchange="renderTasks()">
+          <option value="">All Priorities</option>
+          <option>Low</option>
+          <option>Medium</option>
+          <option>High</option>
+          <option>Urgent</option>
+        </select>
+        <select id="stateFilter" onchange="renderTasks()">
+          <option value="">All States</option>
+          <option>GA</option><option>IL</option><option>NM</option><option>NV</option>
+          <option>PA</option><option>VA</option><option>OR</option><option>Multistate</option>
+        </select>
+        <button class="secondary-btn" onclick="exportCSV()">Export CSV</button>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Task Name</th>
+              <th>Project Type</th>
+              <th>State</th>
+              <th>Assigned By</th>
+              <th>Owner</th>
+              <th>Owner Email</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th>Start Date</th>
+              <th>Due Date</th>
+              <th>Days Left</th>
+              <th>Completion Date</th>
+              <th>Duration</th>
+              <th>Notes</th>
+              <th>New Update Notes</th>
+              <th>Attachments</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="taskTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let tasks = JSON.parse(localStorage.getItem("cutesyHorrorWfmTasks")) || [];
+
+    function todayISO() {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      return today.toISOString().split("T")[0];
+    }
+
+    function dateOnly(dateString) {
+      if (!dateString) return null;
+      const date = new Date(dateString + "T00:00:00");
+      date.setHours(0, 0, 0, 0);
+      return date;
+    }
+
+    function daysBetween(start, end) {
+      if (!start || !end) return "";
+      const startDate = dateOnly(start);
+      const endDate = dateOnly(end);
+      const msPerDay = 1000 * 60 * 60 * 24;
+      return Math.round((endDate - startDate) / msPerDay);
+    }
+
+    function calculateDaysLeft(task) {
+      if (!task.dueDate) return "";
+      if (task.status === "Completed" || task.status === "On Hold") return "Paused";
+      const due = dateOnly(task.dueDate);
+      const now = dateOnly(todayISO());
+      const msPerDay = 1000 * 60 * 60 * 24;
+      return Math.ceil((due - now) / msPerDay);
+    }
+
+    function isOverdue(task) {
+      const left = calculateDaysLeft(task);
+      return typeof left === "number" && left < 0 && task.status !== "Completed" && task.status !== "On Hold";
+    }
+
+    function saveTasks() {
+      localStorage.setItem("cutesyHorrorWfmTasks", JSON.stringify(tasks));
+    }
+
+    function toggleCustomProjectType() {
+      const type = document.getElementById("projectType").value;
+      document.getElementById("customProjectTypeWrap").style.display = type === "Custom" ? "flex" : "none";
+    }
+
+    function suggestPriorityFromAssignedBy() {
+      const assignedBy = document.getElementById("assignedBy").value;
+      const priority = document.getElementById("priority");
+
+      if (assignedBy === "VP" || assignedBy === "Director") priority.value = "Urgent";
+      else if (assignedBy === "Manager") priority.value = "High";
+      else if (assignedBy === "Daisa") priority.value = "Medium";
+    }
+
+    function getAttachmentNames() {
+      const input = document.getElementById("attachmentInput");
+      return Array.from(input.files || []).map(file => file.name);
+    }
+
+    function addTask() {
+      const selectedType = document.getElementById("projectType").value;
+      const customType = document.getElementById("customProjectType").value.trim();
+      const status = document.getElementById("status").value;
+
+      const task = {
+        id: Date.now(),
+        name: document.getElementById("taskName").value.trim(),
+        type: selectedType === "Custom" ? customType : selectedType,
+        state: document.getElementById("state").value,
+        assignedBy: document.getElementById("assignedBy").value,
+        owner: document.getElementById("owner").value.trim(),
+        ownerEmail: document.getElementById("ownerEmail").value.trim(),
+        priority: document.getElementById("priority").value,
+        status: status,
+        startDate: status !== "Not Started" ? todayISO() : "",
+        dueDate: document.getElementById("dueDate").value,
+        completionDate: status === "Completed" ? todayISO() : "",
+        notes: document.getElementById("notes").value.trim(),
+        updateNotes: document.getElementById("updateNotes").value.trim(),
+        attachments: getAttachmentNames(),
+        alertsSent: []
+      };
+
+      if (!task.name) {
+        alert("Add a Task Name first. Even haunted software needs a crumb of information.");
+        return;
+      }
+
+      if (!task.type) {
+        alert("Pick or enter a Project Type.");
+        return;
+      }
+
+      tasks.push(task);
+      processAutomation();
+      saveTasks();
+      clearForm();
+      renderTasks();
+    }
+
+    function clearForm() {
+      document.getElementById("taskName").value = "";
+      document.getElementById("projectType").value = "";
+      document.getElementById("customProjectType").value = "";
+      document.getElementById("customProjectTypeWrap").style.display = "none";
+      document.getElementById("state").value = "";
+      document.getElementById("assignedBy").value = "";
+      document.getElementById("owner").value = "";
+      document.getElementById("ownerEmail").value = "";
+      document.getElementById("priority").value = "Low";
+      document.getElementById("status").value = "Not Started";
+      document.getElementById("dueDate").value = "";
+      document.getElementById("notes").value = "";
+      document.getElementById("updateNotes").value = "";
+      document.getElementById("attachmentInput").value = "";
+    }
+
+    function updateStatus(id, newStatus) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+
+      const oldStatus = task.status;
+      task.status = newStatus;
+
+      if (oldStatus === "Not Started" && newStatus !== "Not Started" && !task.startDate) {
+        task.startDate = todayISO();
+      }
+
+      if (newStatus === "Completed" && !task.completionDate) {
+        task.completionDate = todayISO();
+      }
+
+      if (newStatus !== "Completed") {
+        task.completionDate = "";
+      }
+
+      if (newStatus === "Attention Needed") {
+        createAlert(task, "attention");
+      }
+
+      processAutomation();
+      saveTasks();
+      renderTasks();
+    }
+
+    function updateField(id, field, value) {
+      const task = tasks.find(t => t.id === id);
+      if (!task) return;
+      task[field] = value;
+      processAutomation();
+      saveTasks();
+      renderTasks();
+    }
+
+    function deleteTask(id) {
+      const confirmed = confirm("Delete this project? Tiny ghost says this cannot be undone.");
+      if (!confirmed) return;
+      tasks = tasks.filter(t => t.id !== id);
+      saveTasks();
+      renderTasks();
+    }
+
+    function processAutomation() {
+      tasks.forEach(task => {
+        if (isOverdue(task)) {
+          task.status = "Overdue";
+          task.priority = "Urgent";
+          createAlert(task, "overdue");
+        }
+      });
+    }
+
+    function createAlert(task, alertType) {
+      task.alertsSent = task.alertsSent || [];
+      if (task.alertsSent.includes(alertType)) return;
+
+      task.alertsSent.push(alertType);
+      const email = task.ownerEmail || "No email added yet";
+      const message = alertType === "overdue"
+        ? `OVERDUE ALERT: ${task.name} is past due. Owner: ${task.owner || "Unassigned"}. Email: ${email}. Priority changed to Urgent.`
+        : `ATTENTION NEEDED ALERT: ${task.name} needs corrections or review. Owner: ${task.owner || "Unassigned"}. Email: ${email}.`;
+
+      showAlert(message);
+    }
+
+    function showAlert(message) {
+      const box = document.getElementById("alertBox");
+      box.style.display = "block";
+      box.innerHTML += `<div><strong>🩸 Alert Staged:</strong> ${escapeHTML(message)}</div>`;
+    }
+
+    function getPriorityClass(priority) {
+      return "priority-" + String(priority || "").toLowerCase();
+    }
+
+    function getStatusClass(status) {
+      return "status-" + String(status || "").toLowerCase().replaceAll(" ", "-").replace(/[()]/g, "");
+    }
+
+    function escapeHTML(value) {
+      return String(value || "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderTasks() {
+      processAutomation();
+      const table = document.getElementById("taskTable");
+      const search = document.getElementById("searchBox").value.toLowerCase();
+      const statusFilter = document.getElementById("statusFilter").value;
+      const priorityFilter = document.getElementById("priorityFilter").value;
+      const stateFilter = document.getElementById("stateFilter").value;
+
+      table.innerHTML = "";
+
+      const filtered = tasks.filter(task => {
+        const combined = Object.values(task).join(" ").toLowerCase();
+        return combined.includes(search)
+          && (!statusFilter || task.status === statusFilter)
+          && (!priorityFilter || task.priority === priorityFilter)
+          && (!stateFilter || task.state === stateFilter);
+      });
+
+      filtered.forEach(task => {
+        const overdue = isOverdue(task) || task.status === "Overdue";
+        const daysLeft = calculateDaysLeft(task);
+        const duration = task.startDate && task.completionDate ? daysBetween(task.startDate, task.completionDate) : "";
+        const attachments = (task.attachments || []).length
+          ? task.attachments.map(name => `♡ ${escapeHTML(name)}`).join("<br>")
+          : "";
+
+        table.innerHTML += `
+          <tr class="${overdue ? "overdue-row" : ""}">
+            <td><strong>${escapeHTML(task.name)}</strong></td>
+            <td>${escapeHTML(task.type)}</td>
+            <td>${escapeHTML(task.state)}</td>
+            <td>${escapeHTML(task.assignedBy)}</td>
+            <td><input class="inline-edit" value="${escapeHTML(task.owner)}" onchange="updateField(${task.id}, 'owner', this.value)" /></td>
+            <td><input class="inline-edit" value="${escapeHTML(task.ownerEmail)}" onchange="updateField(${task.id}, 'ownerEmail', this.value)" /></td>
+            <td><span class="badge ${getPriorityClass(task.priority)}">${escapeHTML(task.priority)}</span></td>
+            <td>
+              <select class="inline-edit" onchange="updateStatus(${task.id}, this.value)">
+                ${["Not Started", "In Progress", "On Hold", "Awaiting Sanity Check", "Attention Needed", "Completed", "Overdue"].map(status =>
+                  `<option ${task.status === status ? "selected" : ""}>${status}</option>`
+                ).join("")}
+              </select>
+              <br><span class="badge ${getStatusClass(task.status)}">${escapeHTML(task.status)}</span>
+            </td>
+            <td>${escapeHTML(task.startDate)}</td>
+            <td><input class="inline-edit" type="date" value="${escapeHTML(task.dueDate)}" onchange="updateField(${task.id}, 'dueDate', this.value)" /></td>
+            <td>${escapeHTML(daysLeft)}</td>
+            <td>${escapeHTML(task.completionDate)}</td>
+            <td>${duration !== "" ? duration + " days" : ""}</td>
+            <td><textarea class="inline-edit" onchange="updateField(${task.id}, 'notes', this.value)">${escapeHTML(task.notes)}</textarea></td>
+            <td><textarea class="inline-edit" onchange="updateField(${task.id}, 'updateNotes', this.value)">${escapeHTML(task.updateNotes)}</textarea></td>
+            <td class="attachment-list">${attachments}</td>
+            <td>
+              <button class="small-btn" onclick="updateStatus(${task.id}, 'Completed')">Complete</button>
+              <button class="small-btn secondary-btn" onclick="updateStatus(${task.id}, 'Attention Needed')">Need Fix</button>
+              <button class="small-btn danger-btn" onclick="deleteTask(${task.id})">Delete</button>
+            </td>
+          </tr>
+        `;
+      });
+
+      updateSummary();
+      saveTasks();
+    }
+
+    function updateSummary() {
+      document.getElementById("sumTotal").innerText = tasks.length;
+      document.getElementById("sumProgress").innerText = tasks.filter(t => t.status === "In Progress").length;
+      document.getElementById("sumAttention").innerText = tasks.filter(t => t.status === "Attention Needed").length;
+      document.getElementById("sumOverdue").innerText = tasks.filter(t => t.status === "Overdue" || isOverdue(t)).length;
+      document.getElementById("sumCompleted").innerText = tasks.filter(t => t.status === "Completed").length;
+      document.getElementById("sumHold").innerText = tasks.filter(t => t.status === "On Hold").length;
+    }
+
+    function exportCSV() {
+      const headers = [
+        "Task Name", "Project Type", "State", "Assigned By", "Owner", "Owner Email", "Priority", "Status",
+        "Start Date", "Due Date", "Days Left", "Completion Date", "Duration", "Notes", "New Update Notes", "Attachments"
+      ];
+
+      const rows = tasks.map(task => {
+        const daysLeft = calculateDaysLeft(task);
+        const duration = task.startDate && task.completionDate ? daysBetween(task.startDate, task.completionDate) : "";
+        return [
+          task.name, task.type, task.state, task.assignedBy, task.owner, task.ownerEmail, task.priority, task.status,
+          task.startDate, task.dueDate, daysLeft, task.completionDate, duration, task.notes, task.updateNotes,
+          (task.attachments || []).join(" | ")
+        ];
+      });
+
+      const csv = [headers, ...rows]
+        .map(row => row.map(value => `"${String(value ?? "").replaceAll('"', '""')}"`).join(","))
+        .join("\n");
+
+      const blob = new Blob([csv], { type: "text/csv" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "cutesy_horror_wfm_tracker.csv";
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>
